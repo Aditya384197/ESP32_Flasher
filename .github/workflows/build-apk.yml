@@ -6,15 +6,6 @@ on:
   pull_request:
     branches: [main, master]
   workflow_dispatch:
-    inputs:
-      build_type:
-        description: 'Build Type (debug or release)'
-        required: true
-        default: 'debug'
-        type: choice
-        options:
-          - debug
-          - release
 
 jobs:
   build:
@@ -35,8 +26,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
 
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
@@ -53,31 +42,14 @@ jobs:
           gradle-version: '8.13'
 
       - name: Build Debug APK
-        if: "${{ github.event.inputs.build_type != 'release' }}"
         run: |
           cd android
           gradle assembleDebug --stacktrace --no-daemon
 
-      - name: Build Release APK (Unsigned)
-        if: "${{ github.event.inputs.build_type == 'release' }}"
-        run: |
-          cd android
-          gradle assembleRelease --stacktrace --no-daemon
-
-      - name: Upload Debug APK Artifact
-        if: "${{ github.event.inputs.build_type != 'release' }}"
+      - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
           name: ESP32-Flasher-Debug-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
-          retention-days: 30
-
-      - name: Upload Release APK Artifact
-        if: "${{ github.event.inputs.build_type == 'release' }}"
-        uses: actions/upload-artifact@v4
-        with:
-          name: ESP32-Flasher-Release-APK
-          path: android/app/build/outputs/apk/release/app-release-unsigned.apk
           if-no-files-found: error
           retention-days: 30
