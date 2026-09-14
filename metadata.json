@@ -1,0 +1,6 @@
+{
+  "name": "ESP32 Flasher",
+  "description": "Multi-bin firmware flasher for ESP32 family with dynamic slots, memory offsets, flash mode settings, and Android 10+ USB-OTG WebSerial support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
