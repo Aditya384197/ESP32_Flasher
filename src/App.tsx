@@ -29,7 +29,7 @@ import {
 } from './types';
 import { 
   flasherService 
-} from './services/espFlasher';
+} from './Services/espFlasher';
 import { 
   getDemoBinSlots 
 } from './data/demoFirmware';
