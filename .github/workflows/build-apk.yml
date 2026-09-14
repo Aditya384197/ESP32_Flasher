@@ -31,16 +31,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Node.js 20
+      - name: Set up Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          package-manager-cache: false
+          node-version: '22'
 
-      - name: Set up Gradle 8.14.3
+      - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: '8.14.3'
 
       - name: Install Dependencies
         run: |
@@ -62,13 +59,21 @@ jobs:
         if: "${{ github.event.inputs.build_type != 'release' }}"
         run: |
           cd android
-          gradle assembleDebug --stacktrace
+          if [ -f "./gradlew" ]; then
+            ./gradlew assembleDebug --stacktrace
+          else
+            gradle assembleDebug --stacktrace
+          fi
 
       - name: Build Release APK (Unsigned)
         if: "${{ github.event.inputs.build_type == 'release' }}"
         run: |
           cd android
-          gradle assembleRelease --stacktrace
+          if [ -f "./gradlew" ]; then
+            ./gradlew assembleRelease --stacktrace
+          else
+            gradle assembleRelease --stacktrace
+          fi
 
       - name: Upload Debug APK Artifact
         if: "${{ github.event.inputs.build_type != 'release' }}"
