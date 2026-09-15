@@ -17,6 +17,10 @@
 
 
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
-        <item name="android:background">@drawable/splash</item>
+        <!-- @drawable/splash did not exist anywhere in the project — this is
+             the exact resource that failed your last CI build
+             ("resource drawable/splash ... not found"). Reusing the existing
+             launcher background vector instead of requiring a new asset. -->
+        <item name="android:background">@drawable/ic_launcher_background</item>
     </style>
 </resources>
