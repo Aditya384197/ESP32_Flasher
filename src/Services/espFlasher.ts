@@ -292,9 +292,23 @@ export class EspFlasherService {
           },
         };
 
-        await this.esploader.writeFlash(flashOptions);
+        // Transient USB-OTG noise causing a mid-flash checksum/SLIP error is a
+        // common, well-known ESP32 flashing issue (not specific to this app) —
+        // especially at high baud rates over phone OTG adapters/cables. Retry
+        // the slot once before giving up; a genuine hardware/cable fault will
+        // fail again and surface to the user either way.
+        try {
+          await this.esploader.writeFlash(flashOptions);
+        } catch (firstErr: any) {
+          onLog(`Write failed (${firstErr.message || firstErr}), retrying this slot once...`, 'warning');
+          await new Promise((r) => setTimeout(r, 500));
+          await this.esploader.writeFlash(flashOptions);
+        }
       } catch (hwErr: any) {
         onLog(`Flashing error on hardware: ${hwErr.message || hwErr}`, 'error');
+        if (/noise|corruption|checksum|invalid head/i.test(String(hwErr.message || hwErr))) {
+          onLog('This usually means the current baud rate is too high for your USB-OTG cable/adapter. Open Settings and try 115200 baud (or a shorter/better-quality OTG cable), then flash again.', 'warning');
+        }
         throw hwErr;
       }
 

@@ -291,6 +291,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </option>
               ))}
             </select>
+            {settings.baudRate >= 460800 && (
+              <p className="text-[10.5px] text-amber-400 leading-relaxed pt-1">
+                ⚠ High baud rates can cause "serial noise/corruption" errors while
+                flashing over a phone's USB-OTG adapter, even if erase works fine.
+                If flashing fails partway through, switch back to 115200 baud.
+              </p>
+            )}
           </div>
         </div>
 
